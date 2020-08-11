@@ -91,4 +91,7 @@ dependencies {
 
     //Prefrences
     implementation "androidx.preference:preference:1.1.1"
+
+    // Timber
+    implementation 'com.jakewharton.timber:timber:4.7.1'
 }

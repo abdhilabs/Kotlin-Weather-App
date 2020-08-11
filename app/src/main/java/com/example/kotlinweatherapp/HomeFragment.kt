@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.kotlinweatherapp.database.WeatherDataBase
 import com.example.kotlinweatherapp.databinding.FragmentHomeBinding
+import timber.log.Timber
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -45,9 +46,10 @@ class HomeFragment : Fragment() {
         }
 
         viewModel.globalAll.observe(viewLifecycleOwner, Observer {
-            if (null != it){
-                view?.findNavController()?.navigate(HomeFragmentDirections.actionHomeFragmentToEachWeatherFragment(it))
-                Log.d("HomeFragment", "global All has been observed")
+            if (null != it) {
+                view?.findNavController()
+                    ?.navigate(HomeFragmentDirections.actionHomeFragmentToEachWeatherFragment(it))
+                Timber.d("global All has been observed")
                 viewModel.doneNavigateToEachWeather()
             }
         })

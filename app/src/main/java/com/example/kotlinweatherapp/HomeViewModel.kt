@@ -17,9 +17,6 @@ import kotlinx.coroutines.*
 import retrofit2.HttpException
 import java.net.UnknownHostException
 
-var cityName = "ChelixCity"
-
-enum class Status{LOADING, NO_INTERNET, LOCATION_ERROR, DONE}
 
 class HomeViewModel(
     private val weatherDataBase: WeatherDataBase
@@ -60,7 +57,6 @@ class HomeViewModel(
         uiScope.launch {
             getData()
             time = System.currentTimeMillis()
-            getCurrentProperties()
             getFutureProperties()
         }
         Log.i("ViewModelReal", "mainText value is ${mainText.value} and init called")
@@ -135,35 +131,7 @@ class HomeViewModel(
         }
     }
 
-    fun getCurrentProperties(){
-        uiScope.launch {
-            _status.value = Status.LOADING
-            Log.i("ViewModelCurrent", "cityName is $cityName")
-            val getDeferredFutureProperties =
-                CurrentWeatherItem.currentRetrofitService.getCurrentWeatherAsync(name = cityName)
 
-            try {
-                _currentWeatherInstance.value = getDeferredFutureProperties.await()
-                val currentDatabase = CurrentDatabaseClass(current_weather = _currentWeatherInstance.value!!)
-                withContext(Dispatchers.IO) {
-                    weatherDataBase.currentDao.insertCurrentDataClass(currentDatabase)
-                }
-                Log.i("ViewModel", "Add currentDataClass to Room successfully")
-                _status.value = Status.DONE
-            }
-            catch (noInternetError: UnknownHostException){
-                _status.value = Status.NO_INTERNET
-
-            }
-            catch (locationError: HttpException){
-                _status.value = Status.LOCATION_ERROR
-            }
-            catch(t: Throwable){
-                Log.e("ViewModelCurrent", "Value of cityName is $cityName")
-                Log.e("ViewModelCurrent", "$t")
-            }
-        }
-    }
 
     override fun onCleared() {
         super.onCleared()
